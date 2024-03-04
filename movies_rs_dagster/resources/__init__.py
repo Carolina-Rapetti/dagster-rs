@@ -1,9 +1,11 @@
-# import os
+import os
+from pathlib import Path
 
-# from dagster._utils import file_relative_path
+from dagster._utils import file_relative_path
+from dagster import EnvVar
 # from dagster_aws.s3 import S3Resource
 # from dagster_aws.s3.io_manager import S3PickleIOManager
-# from dagster_dbt import DbtCliResource
+from dagster_dbt import DbtCliResource
 # from dagster_pyspark import pyspark_resource
 
 # from .duckdb_parquet_io_manager import DuckDBPartitionedParquetIOManager
@@ -14,11 +16,37 @@
 # )
 # from .snowflake_io_manager import SnowflakeIOManager
 
-# DBT_PROJECT_DIR = file_relative_path(__file__, "../../dbt_project")
-# dbt_local_resource = DbtCliResource(
-#     project_dir=DBT_PROJECT_DIR,
-#     target="local",
+# AIRBYTE_CONFIG = {
+#     "host":"localhost",
+#     "port":"8000",
+#     # If using basic auth, include username and password:
+#     "username":"airbyte",
+#     "password":"password",
+# }
+
+# airbyte_instance = AirbyteResource(
+#     host="localhost",
+#     port="8000",
+#     # If using basic auth, include username and password:
+#     username="airbyte",
+#     password=EnvVar("AIRBYTE_PASSWORD"),
 # )
+
+DBT_PROJECT_DIR = file_relative_path(__file__, "../../../mlops-ecosystem/db_postgres")
+DBT_PROFILES_DIR = "C:/Users/fla_4/.dbt"
+
+dbt_local_resource = DbtCliResource(
+    project_dir="C:/Users/fla_4/Documents/mlops/mlops-ecosystem/db_postgres",
+    profiles_dir="C:/Users/fla_4/.dbt/"
+)
+# If DAGSTER_DBT_PARSE_PROJECT_ON_LOAD is set, a manifest will be created at runtime.
+# Otherwise, we expect a manifest to be present in the project's target directory.
+# if os.getenv("DAGSTER_DBT_PARSE_PROJECT_ON_LOAD"):
+#     dbt_parse_invocation = dbt_local_resource.cli(["parse"], manifest={}).wait()
+#     dbt_manifest_path = dbt_parse_invocation.target_path.joinpath("manifest.json")
+# else:
+#     dbt_manifest_path = Path(DBT_PROJECT_DIR).joinpath("target", "manifest.json")
+
 # dbt_staging_resource = DbtCliResource(
 #     project_dir=DBT_PROJECT_DIR,
 #     target="staging",
@@ -89,5 +117,6 @@ RESOURCES_LOCAL = {
     #     duckdb_path=os.path.join(DBT_PROJECT_DIR, "hackernews.duckdb"),
     # ),
     # "hn_client": HNAPIClient(),
-    # "dbt": dbt_local_resource,
+    "dbt": dbt_local_resource,
+    # "airbyte": airbyte_instance
 }
